@@ -1,0 +1,30 @@
+version: 2
+jobs:
+
+  test_and_build:
+    working_directory: ~/testcircleci
+    docker:
+      - image: circleci/openjdk
+    steps:
+      - checkout
+      - run:
+          name: Install Maven
+          command: 'sudo apt-get install -y maven'
+      - run:
+          name: Test
+          command: 'mvn test'
+      - run:
+          name: Build web app
+          command: 'mvn clean install -Pweb; mvn eclipse:clean eclipse:eclipse -Pweb'
+      - run:
+          name: Build scheduler app
+          command: 'mvn clean install -Pscheduler; mvn eclipse:clean eclipse:eclipse -Pscheduler'
+
+workflows:
+  version: 2
+  build_and_test:
+    jobs:
+      - test_and_build:
+          filters:
+            branches:
+              only: master

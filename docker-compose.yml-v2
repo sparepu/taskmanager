@@ -1,16 +1,21 @@
-version: '3'
+version: '2'
 services:
   db:
+   container_name: db
    image: postgres:taskmanager
    ports:
      - "5432:5432"
   web:
+    container_name: web
     image: endpoint:latest
     ports:
       - "8080:8080"
     depends_on:
-      - db
+      db:
+       condition: service_started
   scheduler:
+    container_name: scheduler
     image: scheduler:latest
     depends_on:
-      - db
+      db:
+       condition: service_started
